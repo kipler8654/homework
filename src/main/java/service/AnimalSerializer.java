@@ -1,8 +1,10 @@
 package service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.json.JsonMapper;
 import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
+import enums.Extension;
 import model.Animal;
 
 import java.io.File;
@@ -13,85 +15,46 @@ import java.util.Optional;
 /**
  * @author Serhii Klunniy
  */
-public class AnimalSerializer {
+public class AnimalSerializer<T extends ObjectMapper> {
+    private final T mapper;
+    private final File path;
 
-    public void jsonSerialize(Animal animal) {
-        JsonMapper jsonMapper = new JsonMapper();
-        try {
-            jsonMapper.writeValue(new File("src/main/resources/animal.json"), animal);
-        } catch (IOException e) {
-            System.out.println("Cannot create file");
-            e.printStackTrace();
+    public AnimalSerializer(T mapper) {
+        this.mapper = mapper;
+        Extension extension = Extension.TXT;
+        if (mapper instanceof JsonMapper) {
+            extension = Extension.JSON;
         }
+        if (mapper instanceof XmlMapper) {
+            extension = Extension.XML;
+        }
+        if (mapper instanceof YAMLMapper) {
+            extension = Extension.YAML;
+        }
+        this.path = new File("src/main/resources/animal" + extension);
     }
 
-    public void jsonSerialize(List<Animal> animals) {
-        JsonMapper jsonMapper = new JsonMapper();
+    public void serialize(Animal animal) {
         try {
-            jsonMapper.writeValue(new File("src/main/resources/animal.json"), animals);
+            mapper.writeValue(path, animal);
         } catch (IOException e) {
-            System.out.println("Cannot create file");
-            e.printStackTrace();
-        }
-    }
-
-    public Optional<Animal> jsonDeserialize() {
-        JsonMapper jsonMapper = new JsonMapper();
-        try {
-            return Optional.of(jsonMapper.readValue(new File("src/main/resources/animal.json"), Animal.class));
-        } catch (IOException e) {
-            System.out.println("cannot read file");
-            e.printStackTrace();
-            return Optional.empty();
-        }
-    }
-    public void xmlSerialize(Animal animal) {
-        XmlMapper xmlMapper = new XmlMapper();
-        try {
-            xmlMapper.writeValue(new File("src/main/resources/animal.xml"), animal);
-        } catch (IOException e) {
-            System.out.println("cannot write file");
-            e.printStackTrace();
+            System.out.println("Creating file error");
         }
     }
 
-    public Optional<Animal> xmlDeserialize() {
-        XmlMapper xmlMapper = new XmlMapper();
+    public void serialize(List<Animal> animals) {
         try {
-            return Optional.of(xmlMapper.readValue(new File("src/main/resources/animal.json"), Animal.class));
+            mapper.writeValue(path, animals);
         } catch (IOException e) {
-            System.out.println("cannot read file");
-            e.printStackTrace();
-            return Optional.empty();
-        }
-    }
-    public void yamlSerialize(Animal animal) {
-        YAMLMapper yamlMapper = new YAMLMapper();
-        try {
-            yamlMapper.writeValue(new File("src/main/resources/animal.yaml"), animal);
-        } catch (IOException e) {
-            System.out.println("Cannot create file");
-            e.printStackTrace();
+            System.out.println("Creating file error");
         }
     }
 
-    public void yamlSerialize(List<Animal> animals) {
-        YAMLMapper yamlMapper = new YAMLMapper();
-        try {
-            yamlMapper.writeValue(new File("src/main/resources/animal.yaml"), animals);
-        } catch (IOException e) {
-            System.out.println("Cannot create file");
-            e.printStackTrace();
-        }
-    }
-
-    public Optional<Animal> yamlDeserialize() {
-        YAMLMapper yamlMapper = new YAMLMapper();
-        try {
-            return Optional.of(yamlMapper.readValue(new File("src/main/resources/animal.yaml"), Animal.class));
-        } catch (IOException e) {
-            System.out.println("cannot read file");
-            e.printStackTrace();
+    public Optional<Animal> deserialize(){
+        try{
+            return Optional.of(mapper.readValue(path, Animal.class));
+        }catch(IOException e){
+            System.out.println("Creating file error");
             return Optional.empty();
         }
     }

@@ -1,3 +1,4 @@
+import com.fasterxml.jackson.dataformat.xml.XmlMapper;
 import junit.framework.Assert;
 import model.Animal;
 import model.Type;
@@ -12,19 +13,19 @@ import java.util.Optional;
  */
 public class AnimalXmlSerializerTest {
 
-    private final AnimalSerializer animalXmlSerializer = new AnimalSerializer();
+    private final AnimalSerializer<XmlMapper> animalSerializer = new AnimalSerializer<>(new XmlMapper());
     private final Animal input = new Animal("sharik", "2015.03.11", 7,
             false, "doberman", new Type(1, "root", "text"));
 
 
     @Test
     public void serializeTest() {
-        animalXmlSerializer.xmlSerialize(input);
+        animalSerializer.serialize(input);
     }
 
     @Test
     public void deserializeTest() {
-        Optional<Animal> deserialize = animalXmlSerializer.xmlDeserialize();
+        Optional<Animal> deserialize = animalSerializer.deserialize();
         Assert.assertEquals(input, deserialize.orElse(null));
     }
 }

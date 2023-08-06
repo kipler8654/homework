@@ -1,3 +1,4 @@
+import com.fasterxml.jackson.dataformat.yaml.YAMLMapper;
 import junit.framework.Assert;
 import model.Animal;
 import org.junit.jupiter.api.Test;
@@ -11,24 +12,24 @@ import java.util.Optional;
  */
 public class AnimalYamlSerializerTest {
 
-    private final AnimalSerializer animalYamlSerializer = new AnimalSerializer();
+    private final AnimalSerializer<YAMLMapper> animalSerializer = new AnimalSerializer<>(new YAMLMapper());
     private final Animal dog = new Animal("sharik", "2015.03.11", 7, false, "doberman");
     private final Animal cat = new Animal("myrka", "2016.04.20", 7, false, "persian");
 
 
     @Test
     public void serializeTest() {
-        animalYamlSerializer.yamlSerialize(dog);
+        animalSerializer.serialize(dog);
     }
 
     @Test
     public void serializeListTest() {
-        animalYamlSerializer.yamlSerialize(List.of(cat, dog));
+        animalSerializer.serialize(List.of(cat, dog));
     }
 
     @Test
     public void deserializeTest() {
-        Optional<Animal> deserialize = animalYamlSerializer.yamlDeserialize();
+        Optional<Animal> deserialize = animalSerializer.deserialize();
         Assert.assertEquals(dog, deserialize.orElse(null));
     }
 }
