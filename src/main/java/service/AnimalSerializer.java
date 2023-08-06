@@ -22,13 +22,13 @@ public class AnimalSerializer<T extends ObjectMapper> {
     public AnimalSerializer(T mapper) {
         Extension extension = Extension.TXT;
         this.objectMapper = mapper;
-        if (mapper instanceof JsonMapper) {
+        if (objectMapper instanceof JsonMapper) {
             extension = Extension.JSON;
         }
-        if (mapper instanceof XmlMapper) {
+        if (objectMapper instanceof XmlMapper) {
             extension = Extension.XML;
         }
-        if (mapper instanceof YAMLMapper) {
+        if (objectMapper instanceof YAMLMapper) {
             extension = Extension.YAML;
         }
         this.filePath = new File("src/main/resources/animal" + extension);
