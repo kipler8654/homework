@@ -17,11 +17,11 @@ import java.util.Optional;
  */
 public class AnimalSerializer<T extends ObjectMapper> {
     private final T mapper;
-    private final File path;
+    private final File filePath;
 
     public AnimalSerializer(T mapper) {
-        this.mapper = mapper;
         Extension extension = Extension.TXT;
+        this.mapper = mapper;
         if (mapper instanceof JsonMapper) {
             extension = Extension.JSON;
         }
@@ -31,12 +31,12 @@ public class AnimalSerializer<T extends ObjectMapper> {
         if (mapper instanceof YAMLMapper) {
             extension = Extension.YAML;
         }
-        this.path = new File("src/main/resources/animal" + extension);
+        this.filePath = new File("src/main/resources/animal" + extension);
     }
 
     public void serialize(Animal animal) {
         try {
-            mapper.writeValue(path, animal);
+            mapper.writeValue(filePath, animal);
         } catch (IOException e) {
             System.out.println("Creating file error");
         }
@@ -44,7 +44,7 @@ public class AnimalSerializer<T extends ObjectMapper> {
 
     public void serialize(List<Animal> animals) {
         try {
-            mapper.writeValue(path, animals);
+            mapper.writeValue(filePath, animals);
         } catch (IOException e) {
             System.out.println("Creating file error");
         }
@@ -52,7 +52,7 @@ public class AnimalSerializer<T extends ObjectMapper> {
 
     public Optional<Animal> deserialize(){
         try{
-            return Optional.of(mapper.readValue(path, Animal.class));
+            return Optional.of(mapper.readValue(filePath, Animal.class));
         }catch(IOException e){
             System.out.println("Creating file error");
             return Optional.empty();
